@@ -266,10 +266,35 @@ def simple_text(pval, pvalue_format, pvalue_thresholds, test_short_name=None):
 
     for threshold in thresholds:
         if pval < threshold[0]:
-            pval_text = "p ≤ {}".format(threshold[1])
+            pval_text = "AUC ≤ {}".format(threshold[1])
             break
     else:
         pval_text = "AUC = {}".format(pvalue_format).format(pval)
+
+    return text + pval_text
+
+
+def simple_text(pval, pvalue_format, pvalue_thresholds, test_short_name=None):
+    """
+    Generates simple text for test name and pvalue
+    :param pval: pvalue
+    :param pvalue_format: format string for pvalue
+    :param test_short_name: Short name of test to show
+    :param pvalue_thresholds: String to display per pvalue range
+    :return: simple annotation
+    """
+    # Sort thresholds
+    thresholds = sorted(pvalue_thresholds, key=lambda x: x[0])
+
+    # Test name if passed
+    text = test_short_name and test_short_name + " " or ""
+
+    for threshold in thresholds:
+        if pval < threshold[0]:
+            pval_text = "p ≤ {}".format(threshold[1])
+            break
+    else:
+        pval_text = "p = {}".format(pvalue_format).format(pval)
 
     return text + pval_text
 
@@ -395,7 +420,7 @@ def add_stat_annotation(ax, plot='boxplot',
     )
     assert_is_in(
         text_format,
-        ['full', 'simple', 'star'],
+        ['full', 'simple', 'star', 'auc'],
         label='argument `text_format`'
     )
     assert_is_in(
@@ -567,6 +592,9 @@ def add_stat_annotation(ax, plot='boxplot',
             elif text_format is 'simple':
                 test_short_name = show_test_name and test_short_name or ""
                 text = simple_text(result.pval, simple_format_string, pvalue_thresholds, test_short_name)
+            elif text_format is 'auc':
+                test_short_name = show_test_name and test_short_name or ""
+                text = simple_auc_text(result.pval, simple_format_string, pvalue_thresholds, test_short_name)
 
         yref = ymax_in_range_x1_x2
         yref2 = yref
