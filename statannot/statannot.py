@@ -28,13 +28,13 @@ def stat_test(
     num_comparisons=1,
     **stats_params
 ):
-    """Get formatted result of two sample statistical test_h10.
+    """Get formatted result of two sample statistical test.
 
     Arguments
     ---------
     bbox_data1, bbox_data2
     test: str
-        Statistical test_h10 to run. Must be one of:
+        Statistical test to run. Must be one of:
         - `Levene`
         - `Mann-Whitney`
         - `Mann-Whitney-gt`
@@ -54,7 +54,7 @@ def stat_test(
 
     Returns
     -------
-    StatResult object with formatted result of test_h10.
+    StatResult object with formatted result of test.
 
     """
     # Check arguments.
@@ -64,18 +64,18 @@ def stat_test(
         label='argument `comparisons_correction`',
     )
 
-    # Switch to run scipy.stats hypothesis test_h10.
+    # Switch to run scipy.stats hypothesis test.
     if test == 'Levene':
         stat, pval = stats.levene(box_data1, box_data2, **stats_params)
         result = StatResult(
-            'Levene test_h10 of variance', 'levene', 'stat', stat, pval
+            'Levene test of variance', 'levene', 'stat', stat, pval
         )
     elif test == 'Mann-Whitney':
         u_stat, pval = stats.mannwhitneyu(
             box_data1, box_data2, alternative='two-sided', **stats_params
         )
         result = StatResult(
-            'Mann-Whitney-Wilcoxon test_h10 two-sided',
+            'Mann-Whitney-Wilcoxon test two-sided',
             'M.W.W.',
             'U_stat',
             u_stat,
@@ -86,7 +86,7 @@ def stat_test(
             box_data1, box_data2, alternative='greater', **stats_params
         )
         result = StatResult(
-            'Mann-Whitney-Wilcoxon test_h10 greater',
+            'Mann-Whitney-Wilcoxon test greater',
             'M.W.W.',
             'U_stat',
             u_stat,
@@ -97,7 +97,7 @@ def stat_test(
             box_data1, box_data2, alternative='less', **stats_params
         )
         result = StatResult(
-            'Mann-Whitney-Wilcoxon test_h10 smaller',
+            'Mann-Whitney-Wilcoxon test smaller',
             'M.W.W.',
             'U_stat',
             u_stat,
@@ -106,14 +106,14 @@ def stat_test(
     elif test == 't-test_ind':
         stat, pval = stats.ttest_ind(a=box_data1, b=box_data2, **stats_params)
         result = StatResult(
-            't-test_h10 independent samples', 't-test_ind', 'stat', stat, pval
+            't-test independent samples', 't-test_ind', 'stat', stat, pval
         )
     elif test == 't-test_welch':
         stat, pval = stats.ttest_ind(
             a=box_data1, b=box_data2, equal_var=False, **stats_params
         )
         result = StatResult(
-            'Welch\'s t-test_h10 independent samples',
+            'Welch\'s t-test independent samples',
             't-test_welch',
             'stat',
             stat,
@@ -122,7 +122,7 @@ def stat_test(
     elif test == 't-test_paired':
         stat, pval = stats.ttest_rel(a=box_data1, b=box_data2, **stats_params)
         result = StatResult(
-            't-test_h10 paired samples', 't-test_rel', 'stat', stat, pval
+            't-test paired samples', 't-test_rel', 'stat', stat, pval
         )
     elif test == 'Wilcoxon':
         zero_method_default = len(box_data1) <= 20 and "pratt" or "wilcox"
@@ -132,7 +132,7 @@ def stat_test(
             box_data1, box_data2, zero_method=zero_method, **stats_params
         )
         result = StatResult(
-            'Wilcoxon test_h10 (paired samples)', 'Wilcoxon', 'stat', stat, pval
+            'Wilcoxon test (paired samples)', 'Wilcoxon', 'stat', stat, pval
         )
     elif test == 'Kruskal':
         stat, pval = stats.kruskal(box_data1, box_data2, **stats_params)
@@ -143,9 +143,6 @@ def stat_test(
     elif test == 'AUC':
         labels = np.array([0]*len(box_data1)+[1]*len(box_data2)).reshape(-1, 1)
         scores = np.concatenate((box_data1, box_data2)).reshape(-1, 1)
-        #scaler = MinMaxScaler()
-        #scaler.fit(scores)
-        #scores = scaler.transform(scores)
         auc = metrics.roc_auc_score(labels, scores)
         result = StatResult(
             'AUC', 'AUC', 'stat', np.nan, abs(auc-0.5)+0.5
@@ -254,10 +251,10 @@ def pval_annotation_text(x, pvalue_thresholds):
 
 def simple_text(pval, pvalue_format, pvalue_thresholds, test_short_name=None):
     """
-    Generates simple text for test_h10 name and pvalue
+    Generates simple text for test name and pvalue
     :param pval: pvalue
     :param pvalue_format: format string for pvalue
-    :param test_short_name: Short name of test_h10 to show
+    :param test_short_name: Short name of test to show
     :param pvalue_thresholds: String to display per pvalue range
     :return: simple annotation
     """
@@ -292,15 +289,15 @@ def add_stat_annotation(ax, plot='boxplot',
                         color='0.2', linewidth=1.5,
                         fontsize='medium', verbose=1):
     """
-    Optionally computes statistical test_h10 between pairs of data series, and add statistical annotation on top
+    Optionally computes statistical test between pairs of data series, and add statistical annotation on top
     of the boxes/bars. The same exact arguments `data`, `x`, `y`, `hue`, `order`, `width`,
     `hue_order` (and `units`) as in the seaborn boxplot/barplot function must be passed to this function.
 
     This function works in one of the two following modes:
-    a) `perform_stat_test` is True: statistical test_h10 as given by argument `test_h10` is performed.
-    b) `perform_stat_test` is False: no statistical test_h10 is performed, list of custom p-values `pvalues` are
+    a) `perform_stat_test` is True: statistical test as given by argument `test` is performed.
+    b) `perform_stat_test` is False: no statistical test is performed, list of custom p-values `pvalues` are
        used for each pair of boxes. The `test_short_name` argument is then used as the name of the
-       custom statistical test_h10.
+       custom statistical test.
 
     :param plot: type of the plot, one of 'boxplot' or 'barplot'.
     :param line_height: in axes fraction coordinates
@@ -372,7 +369,7 @@ def add_stat_annotation(ax, plot='boxplot',
     # Validate arguments
     if perform_stat_test:
         if test is None:
-            raise ValueError("If `perform_stat_test` is True, `test_h10` must be specified.")
+            raise ValueError("If `perform_stat_test` is True, `test` must be specified.")
         if pvalues is not None or test_short_name is not None:
             raise ValueError("If `perform_stat_test` is True, custom `pvalues` "
                              "or `test_short_name` must be `None`.")
@@ -380,13 +377,13 @@ def add_stat_annotation(ax, plot='boxplot',
                       'Mann-Whitney', 'Mann-Whitney-gt', 'Mann-Whitney-ls',
                       'Levene', 'Wilcoxon', 'Kruskal', 'AUC']
         if test not in valid_list:
-            raise ValueError("test_h10 value should be one of the following: {}."
+            raise ValueError("test value should be one of the following: {}."
                              .format(', '.join(valid_list)))
     else:
         if pvalues is None:
             raise ValueError("If `perform_stat_test` is False, custom `pvalues` must be specified.")
         if test is not None:
-            raise ValueError("If `perform_stat_test` is False, `test_h10` must be None.")
+            raise ValueError("If `perform_stat_test` is False, `test` must be None.")
         if len(pvalues) != len(box_pairs):
             raise ValueError("`pvalues` should be of the same length as `box_pairs`.")
 
@@ -544,7 +541,7 @@ def add_stat_annotation(ax, plot='boxplot',
         else:
             test_short_name = test_short_name if test_short_name is not None else ''
             result = StatResult(
-                'Custom statistical test_h10',
+                'Custom statistical test',
                 test_short_name,
                 None,
                 None,
