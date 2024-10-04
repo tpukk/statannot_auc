@@ -2,7 +2,7 @@
 
 In many cases I have been interested to calculate the receiver operating characteristic (ROC) area under corve auc (AUC)
 and this package for calculating statistical tests has been really nice. This is simple fork for the outdated and not anymore
-mainteined package, to include ROC-AUC curves.
+maintained package, to include ROC-AUC curves.
 
 Here is a minimal example:
 Usage is identical to the original package with few additional things:
