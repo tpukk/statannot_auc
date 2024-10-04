@@ -8,7 +8,11 @@ class StatResult:
 
     @property
     def formatted_output(self):
-        if self.stat_str is None and self.stat is None:
+        if self.test_str == 'AUC':
+            stat_summary = '{}, AUC={:.2f}'.format(
+                self.test_str, self.pval
+            )
+        elif self.stat_str is None and self.stat is None:
             stat_summary = '{}, P_val:{:.3e}'.format(self.test_str, self.pval)
         else:
             stat_summary = '{}, P_val={:.3e} {}={:.3e}'.format(

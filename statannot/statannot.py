@@ -249,7 +249,7 @@ def pval_annotation_text(x, pvalue_thresholds):
     return x_annot if not single_value else x_annot.iloc[0]
 
 
-def simple_text(pval, pvalue_format, pvalue_thresholds, test_short_name=None):
+def simple_auc_text(pval, pvalue_format, pvalue_thresholds, test_short_name=None):
     """
     Generates simple text for test name and pvalue
     :param pval: pvalue
@@ -308,7 +308,7 @@ def add_stat_annotation(ax, plot='boxplot',
                         text_annot_custom=None,
                         loc='inside', show_test_name=True,
                         pvalue_thresholds=DEFAULT, stats_params=dict(),
-                        comparisons_correction='bonferroni',
+                        comparisons_correction=None,
                         use_fixed_offset=False, line_offset_to_box=None,
                         line_offset=None, line_height=0.02, text_offset=1,
                         color='0.2', linewidth=1.5,
@@ -404,6 +404,8 @@ def add_stat_annotation(ax, plot='boxplot',
         if test not in valid_list:
             raise ValueError("test value should be one of the following: {}."
                              .format(', '.join(valid_list)))
+        if comparisons_correction is not None and test == 'AUC':
+            raise ValueError("comparisons correction must be set to None while using AUC")
     else:
         if pvalues is None:
             raise ValueError("If `perform_stat_test` is False, custom `pvalues` must be specified.")

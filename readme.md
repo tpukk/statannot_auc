@@ -1,3 +1,37 @@
+# ROC-AUC support
+
+In many cases I have been interested to calculate the receiver operating characteristic (ROC) area under corve auc (AUC)
+and this package for calculating statistical tests has been really nice. This is simple fork for the outdated and not anymore
+mainteined package, to include ROC-AUC curves.
+
+Here is a minimal example:
+Usage is identical to the original package with few additional things:
+1. set the test='AUC'
+2. text_format='auc' (it works without this but then figures show "p=your auc value)
+3. comparisons_correction=None, which is now default parameter (this is mandatory, since the Bonferroni correction makes no sense for AUC values, in the current implementation)
+
+```python
+import seaborn as sns
+from statannot import add_stat_annotation
+import matplotlib.pyplot as plt
+
+df = sns.load_dataset("tips")
+x = "day"
+y = "total_bill"
+order = ['Sun', 'Thur', 'Fri', 'Sat']
+ax = sns.boxplot(data=df, x=x, y=y, order=order)
+test_results = add_stat_annotation(ax, data=df, x=x, y=y, order=order,
+                                   box_pairs=[("Thur", "Fri"), ("Thur", "Sat"), ("Fri", "Sun")],
+                                   test='AUC', text_format='auc', comparisons_correction=None,
+                                   loc='outside', verbose=2)
+test_results
+plt.show()
+```
+
+![Example 1](/example/minimal_auc_example.png)
+
+# END of my forked modifications
+
 # Disclaimer
 
 **This repository is not maintained anymore**. I recommend using the forked package [trevismd/statannotations](https://github.com/trevismd/statannotations), which has a cleaner API and further extends the functionalities of `statannot`.
